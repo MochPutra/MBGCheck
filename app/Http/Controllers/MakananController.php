@@ -9,20 +9,32 @@ class MakananController extends Controller
 {
     public function index(Request $request)
     {
-        // Menangkap input dari kolom pencarian
+        // Menangkap input dari kolom pencarian dan filter kategori
         $keyword = $request->input('search');
+        $kategori = $request->input('kategori');
 
-        // Jika ada pencarian, gunakan ILIKE (khusus PostgreSQL agar case-insensitive)
+        // Ambil semua kategori unik untuk dropdown filter
+        $kategoris = Makanan::select('kategori')->distinct()->orderBy('kategori')->pluck('kategori');
+
+        // Build query
+        $query = Makanan::with('nilaiGizi');
+
+        // Filter berdasarkan pencarian
         if ($keyword) {
-            $makanans = Makanan::with('nilaiGizi')
-                ->where('nama_makanan', 'ILIKE', "%" . $keyword . "%")
-                ->get();
-        } else {
-            // Jika tidak ada pencarian, tampilkan semua makanan
-            $makanans = Makanan::with('nilaiGizi')->get();
+            $query->where('nama_makanan', 'ILIKE', "%" . $keyword . "%");
         }
 
-        return view('makanan.index', compact('makanans', 'keyword'));
+        // Filter berdasarkan kategori
+        if ($kategori) {
+            $query->where('kategori', $kategori);
+        }
+
+        $makanans = $query->paginate(50);
+
+        // Agar parameter search & kategori tetap terbawa saat pindah halaman
+        $makanans->appends(['search' => $keyword, 'kategori' => $kategori]);
+
+        return view('makanan.index', compact('makanans', 'keyword', 'kategoris', 'kategori'));
     }
     public function show($id)
     {

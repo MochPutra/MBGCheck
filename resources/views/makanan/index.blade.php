@@ -24,9 +24,22 @@
                     Cari Makanan
                 </a>
 
+                <a href="/dashboard" class="flex items-center px-2 py-2.5 text-gray-600 hover:bg-gray-100 hover:text-blue-600 rounded-lg group transition-colors">
+                    <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    Dashboard Analitik
+                </a>
+                <a href="/jadwal-menu" class="flex items-center px-2 py-2.5 text-gray-600 hover:bg-gray-100 hover:text-blue-600 rounded-lg group transition-colors">
+                    <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    Jadwal Menu
+                </a>
+                <a href="/kalkulator" class="flex items-center px-2 py-2.5 text-gray-600 hover:bg-gray-100 hover:text-blue-600 rounded-lg group transition-colors">
+                    <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    Kalkulator Gizi
+                </a>
+
                 @if(session('is_admin'))
                     <p class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 mt-6">Manajemen (Admin)</p>
-                    
+
                     <a href="/admin/makanan" class="flex items-center px-2 py-2.5 text-gray-600 hover:bg-gray-100 hover:text-blue-600 rounded-lg group transition-colors">
                         <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
                         Kelola Data Makanan
@@ -62,13 +75,37 @@
             <div class="flex-1 overflow-y-auto p-8">
                 <div class="max-w-5xl mx-auto">
                     
-                    <!-- FORM PENCARIAN -->
-                    <form action="/" method="GET" class="mb-8 flex gap-3 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama makanan... (misal: Nasi)" 
-                               class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
-                        <button type="submit" class="bg-blue-600 text-white px-8 py-2.5 rounded-lg hover:bg-blue-700 font-medium transition-colors shadow-sm">
-                            Cari
-                        </button>
+                    <!-- FORM PENCARIAN & FILTER -->
+                    <form action="/" method="GET" class="mb-8 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                        <div class="flex gap-3">
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama makanan... (misal: Nasi)" 
+                                   class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                            
+                            {{-- Dropdown Filter Kategori --}}
+                            <select name="kategori" onchange="this.form.submit()" class="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-gray-700 min-w-[180px]">
+                                <option value="">Semua Kategori</option>
+                                @foreach($kategoris as $kat)
+                                    <option value="{{ $kat }}" {{ request('kategori') == $kat ? 'selected' : '' }}>
+                                        {{ $kat }}
+                                    </option>
+                                @endforeach
+                            </select>
+
+                            <button type="submit" class="bg-blue-600 text-white px-8 py-2.5 rounded-lg hover:bg-blue-700 font-medium transition-colors shadow-sm whitespace-nowrap">
+                                Cari
+                            </button>
+                        </div>
+
+                        {{-- Label kategori aktif --}}
+                        @if(request('kategori'))
+                            <div class="mt-3 flex items-center gap-2">
+                                <span class="text-sm text-gray-500">Filter aktif:</span>
+                                <span class="inline-flex items-center gap-1 bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full font-medium">
+                                    {{ request('kategori') }}
+                                    <a href="/?search={{ request('search') }}" class="ml-1 text-blue-600 hover:text-blue-800 font-bold">&times;</a>
+                                </span>
+                            </div>
+                        @endif
                     </form>
 
 <!-- GRID DAFTAR MAKANAN -->
@@ -119,7 +156,57 @@
                                 <p class="text-gray-500 font-medium">Belum ada makanan yang terdaftar.</p>
                             </div>
                         @endforelse
-                    </div>        </main>
+                    </div>
+
+                    <!-- PAGINATION -->
+                    @if($makanans->hasPages())
+                        <div class="mt-8 flex flex-col items-center gap-4">
+                            <div class="flex items-center gap-3">
+                                {{-- Tombol Previous --}}
+                                @if($makanans->onFirstPage())
+                                    <span class="px-5 py-2.5 bg-gray-100 text-gray-400 rounded-lg font-medium cursor-not-allowed select-none">
+                                        &larr; Sebelumnya
+                                    </span>
+                                @else
+                                    <a href="{{ $makanans->previousPageUrl() }}" class="px-5 py-2.5 bg-white text-blue-600 border border-blue-200 rounded-lg font-medium hover:bg-blue-50 hover:border-blue-400 transition-all shadow-sm">
+                                        &larr; Sebelumnya
+                                    </a>
+                                @endif
+
+                                {{-- Info Halaman (klik untuk pindah halaman) --}}
+                                <div class="relative">
+                                    <select onchange="window.location.href=this.value"
+                                            class="appearance-none px-4 py-2.5 pr-8 bg-blue-600 text-white rounded-lg font-semibold shadow-sm cursor-pointer hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                                        @for($i = 1; $i <= $makanans->lastPage(); $i++)
+                                            <option value="{{ $makanans->url($i) }}" {{ $i == $makanans->currentPage() ? 'selected' : '' }}>
+                                                {{ $i }} / {{ $makanans->lastPage() }}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                    <svg class="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-white pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+
+                                {{-- Tombol Next --}}
+                                @if($makanans->hasMorePages())
+                                    <a href="{{ $makanans->nextPageUrl() }}" class="px-5 py-2.5 bg-white text-blue-600 border border-blue-200 rounded-lg font-medium hover:bg-blue-50 hover:border-blue-400 transition-all shadow-sm">
+                                        Selanjutnya &rarr;
+                                    </a>
+                                @else
+                                    <span class="px-5 py-2.5 bg-gray-100 text-gray-400 rounded-lg font-medium cursor-not-allowed select-none">
+                                        Selanjutnya &rarr;
+                                    </span>
+                                @endif
+                            </div>
+
+                            <p class="text-sm text-gray-500">
+                                Menampilkan {{ $makanans->firstItem() }}–{{ $makanans->lastItem() }} dari {{ $makanans->total() }} makanan
+                            </p>
+                        </div>
+                    @endif
+
+                </div>
+            </div>
+        </main>
     </div>
 
 </body>
