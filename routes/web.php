@@ -20,3 +20,4 @@ use App\Http\Controllers\AdminMakananController;
 Route::get('/admin/makanan', [AdminMakananController::class, 'index']);
 Route::get('/admin/makanan/create', [AdminMakananController::class, 'create']);
 Route::post('/admin/makanan', [AdminMakananController::class, 'store']);
+Route::get('/makanan/{id}', [MakananController::class, 'show']);

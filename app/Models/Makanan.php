@@ -17,4 +17,9 @@ class Makanan extends Model
     {
         return $this->hasOne(NilaiGizi::class, 'id_makanan', 'id_makanan');
     }
+    // Relasi ke tabel resep (1 makanan punya 1 resep)
+    public function resep()
+    {
+        return $this->hasOne(Resep::class, 'id_makanan', 'id_makanan');
+    }
 }

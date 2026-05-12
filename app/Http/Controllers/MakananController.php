@@ -24,4 +24,11 @@ class MakananController extends Controller
 
         return view('makanan.index', compact('makanans', 'keyword'));
     }
+    public function show($id)
+    {
+        // Ambil data makanan beserta relasi gizi dan resepnya
+        $makanan = \App\Models\Makanan::with(['nilaiGizi', 'resep'])->findOrFail($id);
+        
+        return view('makanan.show', compact('makanan'));
+    }
 }
